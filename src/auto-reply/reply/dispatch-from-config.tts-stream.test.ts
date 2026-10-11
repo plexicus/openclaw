@@ -340,7 +340,6 @@ describe("source completion", () => {
           }
           const { replyPayloads } = await buildReplyPayloads({
             payloads: [finalPayload],
-            isHeartbeat: false,
             didLogHeartbeatStrip: false,
             blockStreamingEnabled: true,
             blockReplyPipeline: pipeline,
@@ -479,7 +478,6 @@ describe("source completion", () => {
           await Promise.all([prefix, suffix]);
           const { replyPayloads } = await buildReplyPayloads({
             payloads: [{ text: "See [" }],
-            isHeartbeat: false,
             didLogHeartbeatStrip: false,
             blockStreamingEnabled: true,
             blockReplyPipeline: pipeline,
