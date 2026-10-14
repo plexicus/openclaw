@@ -144,9 +144,17 @@ describe.runIf("__vitest_browser__" in globalThis)("sidebar session filter popov
       await userEvent.keyboard("{Escape}");
       await expect.element(search).toHaveValue("");
       await expect.poll(() => ownerOptions(sidebar)).toHaveLength(4);
+      // Focus returns before the closing frame releases native occlusion.
+      const ownersClosed = new Promise<void>((resolve) => {
+        search
+          .element()
+          .closest(".picker-select__menu")!
+          .addEventListener("overlay-after-hide", () => resolve(), { once: true });
+      });
       await userEvent.keyboard("{Escape}");
+      await ownersClosed;
       await expect.element(owners).toHaveFocus();
-      await expect.poll(() => occlusion).toEqual([false, true, false]);
+      expect(occlusion).toEqual([false, true, false]);
       await trigger.click();
       await expect.poll(() => occlusion).toEqual([false, true, false, true]);
       await expectFits();
