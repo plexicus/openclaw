@@ -410,11 +410,18 @@ export function sanitizeChatHistoryMessage(
     changed = true;
   }
   const openClawMeta = readRecord(entry["__openclaw"]);
-  if (openClawMeta && ("upstreamUserText" in openClawMeta || "media" in openClawMeta)) {
+  if (
+    openClawMeta &&
+    ("upstreamUserText" in openClawMeta ||
+      "requesterOrigin" in openClawMeta ||
+      "media" in openClawMeta)
+  ) {
     // Codex retains the decorated upstream prompt for transcript reconstruction.
     // It is not display data and can otherwise evict the visible row from history.
     const projectedMeta = { ...openClawMeta };
     delete projectedMeta.upstreamUserText;
+    // Operational requester custody is independent of redacted display identity.
+    delete projectedMeta.requesterOrigin;
     if ("media" in projectedMeta) {
       projectedMeta.media = projectChatHistoryMediaFacts(projectedMeta.media);
       if (projectedMeta.media === undefined) {
